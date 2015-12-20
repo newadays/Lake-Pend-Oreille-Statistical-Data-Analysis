@@ -1,0 +1,56 @@
+package stat;
+
+import java.io.BufferedReader;
+import java.io.IOException;
+import java.io.InputStreamReader;
+import java.net.URL;
+import java.util.ArrayList;
+import java.util.Scanner;
+
+public class DataAnalysis {
+
+	public static void main(String[] args) throws IOException, NumberFormatException {
+		Scanner in = new Scanner(System.in);
+		System.out.println("Please enter the year 2012-2015");                                             //specify the year of interest
+		String s =in.nextLine();
+		URL datamil = new URL("http://lpo.dt.navy.mil/data/DM/Environmental_Data_Deep_Moor_"+s+".txt");  //read from the Lake Pend US Navy Weather online site
+		BufferedReader file = new BufferedReader(new InputStreamReader(datamil.openStream()));          //read the input stream line by line
+		ArrayList<Double>airtemp = new ArrayList<Double>();                                             //Create Array List to store the data
+		ArrayList<Double>baroPress = new ArrayList<Double>();
+		ArrayList<Double>windGust = new ArrayList<Double>();
+		in.close();
+		file.readLine();                                                                                 //Read the first line - Label. Not used for calculations
+		String Line=null;
+		while((Line=file.readLine())!=null){                                                             //Loop and read from the second line - First line is the label
+			airtemp.add(Double.parseDouble(Line.substring(20, 24)));                                     // Read from the start and end of the desired reading
+			baroPress.add(Double.parseDouble(Line.substring(26, 30)));
+			windGust.add(Double.parseDouble(Line.substring(50,54)));
+		}
+		System.out.println("The mean of the Air Temperature readings  " + meanresult(airtemp));           //Print results
+		System.out.println("The median of the Air Temperature readings   " + medianresult(airtemp));
+		System.out.println("The mean of the Air Pressure readings  " + meanresult(baroPress));
+		System.out.println("The median of the Air Pressure readings   " + medianresult(baroPress));
+		System.out.println("The mean of the Wind Gust readings  " + meanresult(windGust));
+		System.out.println("The median of the Wind Gust readings   " + medianresult(windGust));
+	}
+	public  static double meanresult(ArrayList<Double> str){                                               // Calculate the mean
+		double res=0;
+		for (double i:str){
+			res +=i;
+		}
+		return (res)/str.size();
+	}
+	public static double medianresult(ArrayList<Double> str){                                              // Calculate the median
+		double median =0;
+		if (str.size()%2 == 0){
+			int pos=str.size()/2;
+			median = (str.get(pos-1)+str.get(pos))/2.0;
+		} else{
+
+			double pos = Math.ceil(str.size()/2);
+			int pos2 = (int) Math.round(pos);
+			median = str.get(pos2);
+		}
+		return median;
+	}
+}
